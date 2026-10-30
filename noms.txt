@@ -1,5 +1,0 @@
-Projet mené par Lisa (xk0lt) et Raphaël (raphaell-ops) 
-
-lien vers le repos GitHub :
-
-https://github.com/raphaell-ops/TaskFlow
