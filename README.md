@@ -174,6 +174,23 @@ L'application ne dispose ni de serveur ni de base de données. Toutes les donné
 }
 ```
 
+## 4. Arborescence des fichiers
+ 
+```
+taskflow/
+├── index.html            → page des tâches
+├── login.html            → connexion et création du compte
+├── css/
+│   └── style.css
+├── js/
+│   ├── stockage.js       → lecture / écriture du localStorage
+│   ├── taches.js         → créer, afficher, modifier, supprimer
+│   ├── organisation.js   → tri, filtres, catégories
+│   └── auth.js           → connexion, robustesse, jauge, hachage, blocage
+├── README.md
+└── PROMPTS.md
+```
+
 ### Tâche
 
 | Champ | Type | Valeurs autorisées | Rôle |
