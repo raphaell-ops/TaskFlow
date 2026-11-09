@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ========================================== -->
+  <!-- ZONE 1 : AUTHENTIFICATION (Lisa - Cyber)  -->
+  <!-- ========================================== -->
+  <section id="auth-section" class="card">
+    <div class="auth-header">
+      <h1 id="auth-title">Inscription</h1>
+      <p class="subtitle">Bienvenue sur TaskFlow</p>
+    </div>
+
+    <form id="auth-form">
+      <div class="form-group">
+        <label for="username">Identifiant</label>
+        <input type="text" id="username" required placeholder="Ex: Raph31" autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" required placeholder="••••••••" autocomplete="new-password">
+      </div>
+
+      <!-- Jauge de robustesse (US7) -->
+      <div id="password-strength-container" class="strength-box">
+        <div class="strength-header">
+          <span>Force du mot de passe :</span>
+          <strong id="strength-label">Faible</strong>
+        </div>
+        <div class="meter-bar"><div id="strength-bar"></div></div>
+
+        <ul id="password-rules" class="rules-list">
+          <li id="rule-length">❌ 8 caractères minimum</li>
+          <li id="rule-uppercase">❌ Au moins une majuscule</li>
+          <li id="rule-number">❌ Au moins un chiffre</li>
+          <li id="rule-special">❌ Au moins un caractère spécial (@, $, !, etc.)</li>
+        </ul>
+      </div>
+
+      <!-- Confirmation du mot de passe -->
+      <div class="form-group" id="confirm-group">
+        <label for="confirm-password">Confirmer le mot de passe</label>
+        <input type="password" id="confirm-password" required placeholder="••••••••" autocomplete="new-password">
+      </div>
+
+      <p id="auth-message" class="error-msg" role="alert"></p>
+
+      <button type="submit" id="auth-submit-btn" class="btn-primary">Créer un compte</button>
+    </form>
+
+    <p class="switch-mode">
+      <span id="switch-text">Déjà un compte ?</span>
+      <button type="button" id="toggle-auth-mode" class="btn-link">Se connecter</button>
+    </p>
+  </section>
+
+
+  <!-- ========================================== -->
+  <!-- ZONE 2 : APPLICATION TASKFLOW (Raph - Info) -->
+  <!-- ========================================== -->
+  <section id="app-section" class="hidden">
+    <header class="app-header">
+      <div class="brand">
+        <h1>TaskFlow</h1>
+        <span class="badge-app">Gestion de tâches</span>
+      </div>
+      <button id="logout-btn" class="btn-secondary">Se déconnecter</button>
+    </header>
+
+    <main class="app-main">
+
+      <!-- Accordéon 1 : Formulaire Ajouter / Modifier une tâche (US1, US2, US6) -->
+      <details class="card-accordion" id="task-accordion" open>
+        <summary class="accordion-header">
+          <h2 id="task-form-title">Ajouter une nouvelle tâche</h2>
+          <span class="arrow">▼</span>
+        </summary>
+        <form id="task-form" class="accordion-content">
+          <div class="form-group">
+            <label for="task-title">Titre *</label>
+            <input type="text" id="task-title" placeholder="Ex: Réviser le TP de JS">
+            <small id="task-title-error" class="error-msg hidden">Le titre est obligatoire</small>
+          </div>
+
+          <div class="controls-grid">
+            <div class="form-group">
+              <label for="task-stars">Priorité</label>
+              <select id="task-stars">
+                <option value="*">Nv. 1 (★) : secondaire</option>
+                <option value="**">Nv. 2 (★★) : moyenne</option>
+                <option value="***">Nv. 3 (★★★) : important</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="task-category">Catégorie</label>
+              <select id="task-category">
+                <option value="">Aucune catégorie</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="task-due-date">Échéance (facultative)</label>
+            <input type="date" id="task-due-date">
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" id="add-task-btn" class="btn-primary">Valider la tâche</button>
+            <button type="button" id="cancel-edit-btn" class="btn-secondary hidden">Annuler</button>
+          </div>
+        </form>
+      </details>
+
+      <!-- Accordéon 2 : Formulaire Créer une catégorie (US6) -->
+      <details class="card-accordion">
+        <summary class="accordion-header">
+          <h2>Créer une catégorie</h2>
+          <span class="arrow">▼</span>
+        </summary>
+        <form id="category-form" class="accordion-content">
+          <div class="category-form-inline">
+            <div class="form-group flex-1">
+              <label for="category-name">Nom de la catégorie</label>
+              <input type="text" id="category-name" placeholder="Ex: Cours, Perso...">
+            </div>
+            <div class="form-group">
+              <label for="category-color">Couleur</label>
+              <input type="color" id="category-color" value="#3b82f6">
+            </div>
+            <button type="submit" class="btn-primary">Ajouter</button>
+          </div>
+          <small id="category-error" class="error-msg hidden"></small>
+        </form>
+      </details>
+
+      <!-- Section principale : Liste des tâches + Filtres intégrés -->
+      <section class="card-app">
+        <div class="list-header">
+          <h2>Ma liste de tâches</h2>
+
+          <!-- Tri directement intégré dans l'espace de la liste (US5) -->
+          <div class="list-filters">
+            <div class="filter-item">
+              <label for="sort-option">Tri :</label>
+              <select id="sort-option">
+                <option value="aucun">Récents</option>
+                <option value="priorite">Priorité (3 étoiles d'abord)</option>
+                <option value="echeance">Échéance proche</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recherche par mot-clé (titre ou catégorie) -->
+        <div class="search-box">
+          <label for="search-input" class="sr-only">Rechercher une tâche</label>
+          <input type="search" id="search-input" placeholder="Rechercher un mot-clé..." autocomplete="off">
+        </div>
+
+        <!-- Filtre par statut : une ligne de boutons cliquables (US5) -->
+        <div id="status-filter" class="status-filter" role="group" aria-label="Filtrer par statut">
+          <button type="button" class="btn-status active" data-status="tous">Tous</button>
+          <button type="button" class="btn-status" data-status="a_commencer">À faire</button>
+          <button type="button" class="btn-status" data-status="en_cours">En cours</button>
+          <button type="button" class="btn-status" data-status="abandonne">Abandonnées</button>
+          <button type="button" class="btn-status" data-status="termine">Terminées</button>
+        </div>
+
+        <ul id="task-list" class="task-list"></ul>
+      </section>
+
+    </main>
+  </section>
+
+  <!-- Fenêtre : date facultative quand une tâche est terminée ou abandonnée -->
+  <dialog id="end-date-dialog" class="dialog-box">
+    <form id="end-date-form">
+      <h2 id="end-date-title">Tâche terminée !</h2>
+      <p class="dialog-text">Veux-tu noter la date ? C'est facultatif.</p>
+      <div class="form-group">
+        <label for="end-date-input" id="end-date-label">Date de fin</label>
+        <input type="date" id="end-date-input">
+      </div>
+      <div class="form-buttons">
+        <button type="submit" class="btn-primary">Enregistrer</button>
+        <button type="button" id="end-date-skip" class="btn-secondary">Passer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Scripts JavaScript -->
+  <script src="js/stockage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/taches.js"></script>
+  <script src="js/organisation.js"></script>
+</body>
+</html>
