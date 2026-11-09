@@ -193,8 +193,11 @@
 >
 > **Prompts :** ils sont copiés tels qu'ils ont été écrits, fautes comprises.
 >
+<<<<<<< HEAD
 > **Classement :** les prompts sont regroupés par sprint du cours. Un prompt qui touche plusieurs sprints est rangé dans celui où se trouve l'essentiel du travail, et une ligne « Touche aussi » l'indique. Les numéros ne suivent donc pas l'ordre chronologique.
 >
+=======
+>>>>>>> 01b08c179b0476faa3a15b771beec3d851fafc44
 > **Attention :** les prompts 1 à 3 décrivent l'état de la séance 1. L'application a évolué depuis (« en attente » est devenu « abandonnée », les priorités ont été renommées, etc.). Le README décrit l'état actuel.
 
 ---
@@ -208,7 +211,7 @@
 - **Outil :** Claude Code
 
 **Prompt :**
-> quand on met une tache en terminé ou il faut proposer a l'utilisateur de mettre une date de fin, ceci est facultatif
+> quand on met une tache en terminé il faut proposer a l'utilisateur de mettre une date de fin, il faut ajouter un bouton passer si l'utilisateur ne souhaite pas mettre de date
 
 **Résultat :**
 - Quand une tâche passe en « Terminée », une fenêtre propose une date de fin (aujourd'hui par défaut) avec deux boutons : « Enregistrer » et « Passer ».
@@ -219,7 +222,7 @@
 - **Modifié :** rien
 - **Rejeté :** rien
 - **Pourquoi :**
-  - Une fenêtre dédiée est plus fiable qu'une saisie de texte libre : le navigateur fournit le sélecteur de date et le format reste `AAAA-MM-JJ`, comme pour l'échéance.
+  - Une fenêtre dédiée est plus fiable qu'une saisie de texte libre : le navigateur fournit le sélecteur de date et le format reste `JJ-MM-AAAA`, comme pour l'échéance.
   - Les anciennes tâches sans `dateFin` continuent de fonctionner.
 
 #### Prompt 5 · Changer le statut en cliquant sur la case
