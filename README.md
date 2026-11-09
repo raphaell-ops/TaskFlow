@@ -25,11 +25,12 @@ Permettre à un utilisateur de gérer ses tâches (créer, organiser, suivre, te
 - Sauvegarde automatique : les tâches sont retrouvées après fermeture du navigateur
 
 ### Fonctionnalités filière Informatique (Raphaël)
-- Priorité de 1 à 3 étoiles
-- 4 statuts dans un menu déroulant : à faire, en cours, en attente, terminée
+- Priorité en 3 niveaux : nv. 1 (1 étoile) secondaire, nv. 2 (2 étoiles) moyenne, nv. 3 (3 étoiles) important
+- 4 statuts en boutons cliquables : à faire, en cours, abandonnée, terminée
 - Filtre par statut
 - Tri par priorité ou par échéance
 - Catégories en couleur et création de catégories
+- Bonus : recherche par mot-clé (dans le titre ou le nom de la catégorie)
 
 ### Fonctionnalités filière Cybersécurité (Lisa)
 - Création de compte avec contrôle de robustesse du mot de passe : 8 caractères minimum, une majuscule, un chiffre, un caractère spécial
@@ -52,7 +53,7 @@ Les stories ont été obtenues avec l'IA en 3 itérations (détail dans [PROMPTS
 > En tant qu'utilisateur, je veux ajouter une tâche avec un titre, une priorité de 1 à 3 étoiles et une échéance, sans pouvoir valider si le titre est vide, afin de noter clairement tout ce que j'ai à faire.
 
 - Si le titre est vide ou ne contient que des espaces, la tâche n'est pas créée et un message « Le titre est obligatoire » s'affiche sous le champ.
-- La priorité se choisit en cliquant sur 1, 2 ou 3 étoiles ; par défaut, une tâche a 1 étoile.
+- La priorité se choisit dans un menu : nv. 1 (1 étoile) secondaire, nv. 2 (2 étoiles) moyenne, nv. 3 (3 étoiles) important ; par défaut, une tâche est au niveau 1.
 - Une fois validée, la tâche apparaît immédiatement dans la liste avec le statut « à faire », et le formulaire se vide.
 
 ### US2 · Afficher, modifier, supprimer
@@ -65,8 +66,8 @@ Les stories ont été obtenues avec l'IA en 3 itérations (détail dans [PROMPTS
 ### US3 · Terminer une tâche
 > En tant qu'utilisateur, je veux marquer une tâche comme terminée pour qu'elle apparaisse barrée afin de voir d'un coup d'œil ce que j'ai déjà accompli.
 
-- Cocher la case d'une tâche affiche son titre barré et passe automatiquement son statut à « terminée ».
-- Décocher la case retire le barré et remet le statut à « à faire ».
+- La case d'une tâche a 3 états : vide (« à faire »), « – » (« en cours ») et cochée (« terminée »). Chaque clic passe à l'état suivant.
+- Quand la case est cochée, le titre apparaît barré ; un clic de plus retire le barré et remet le statut à « à faire ».
 
 ### US4 · Sauvegarde automatique
 > En tant qu'utilisateur, je veux retrouver automatiquement mes tâches à chaque fois que j'ouvre l'application afin de ne rien perdre entre deux utilisations.
@@ -75,12 +76,15 @@ Les stories ont été obtenues avec l'IA en 3 itérations (détail dans [PROMPTS
 - Toute modification (ajout, changement, suppression, case cochée) est enregistrée sans bouton « Sauvegarder ».
 
 ### US5 · Organiser sa liste
-> En tant qu'utilisateur, je veux choisir le statut de chaque tâche (à faire, en cours, en attente, terminée), filtrer ma liste par statut et la trier par priorité ou par échéance afin de me concentrer sur ce qui est le plus urgent.
+> En tant qu'utilisateur, je veux choisir le statut de chaque tâche (à faire, en cours, abandonnée, terminée), filtrer ma liste par statut et la trier par priorité ou par échéance afin de me concentrer sur ce qui est le plus urgent.
 
-- Chaque tâche a un menu déroulant avec les 4 statuts ; choisir « terminée » coche la case et barre la tâche, choisir un autre statut la décoche et retire le barré.
-- Un filtre permet d'afficher toutes les tâches ou seulement celles d'un statut donné.
-- Le tri par priorité affiche d'abord les tâches à 3 étoiles ; le tri par échéance affiche d'abord la date la plus proche.
-- Filtre et tri peuvent être utilisés en même temps.
+- Chaque tâche commence « à faire ». Un clic sur sa case la passe « en cours », un second clic la passe « terminée » (case cochée, titre barré), un troisième la remet « à faire ».
+- Un bouton « Abandonner » (à côté de « Supprimer ») passe la tâche en « abandonnée » ; le bouton devient « Reprendre » pour la remettre « à faire ».
+- Quand une tâche passe en « terminée » ou « abandonnée », une fenêtre propose (sans obliger) de noter la date.
+- Une ligne de boutons cliquables au-dessus de la liste permet d'afficher toutes les tâches ou seulement celles d'un statut donné.
+- Le tri par priorité affiche d'abord les tâches importantes (niveau 3, 3 étoiles) ; le tri par échéance affiche d'abord la date la plus proche.
+- Une barre de recherche garde les tâches dont le titre ou la catégorie contient le mot saisi (majuscules et accents ignorés).
+- Recherche, filtre et tri peuvent être utilisés en même temps.
 
 ### US6 · Classer par catégorie
 > En tant qu'utilisateur, je veux créer mes propres catégories colorées et y classer mes tâches afin de distinguer rapidement mes cours, ma vie perso et mes projets.
@@ -111,14 +115,16 @@ Les stories ont été obtenues avec l'IA en 3 itérations (détail dans [PROMPTS
 
 | Règle | Comportement |
 |---|---|
-| Case ↔ statut | Cocher la case passe le statut à « terminée » ; choisir « terminée » coche la case. Décocher ou choisir un autre statut fait l'inverse. |
-| Statut par défaut | Une nouvelle tâche est « à faire » ; une tâche décochée revient à « à faire ». |
-| Priorité par défaut | 1 étoile. |
+| Case à cliquer | Chaque clic change le statut : « à faire » → « en cours » → « terminée » → « à faire ». Seule une tâche « terminée » a sa case cochée et son titre barré. |
+| Abandon | Le bouton « Abandonner » passe la tâche en « abandonnée » (affichée en rouge, comme « terminée » est en vert) ; « Reprendre » la remet « à faire ». |
+| Date de fin | Proposée (facultative) quand une tâche devient « terminée » ou « abandonnée ». |
+| Statut par défaut | Une nouvelle tâche est « à faire ». |
+| Priorité par défaut | Niveau 1 (1 étoile, secondaire). |
 | Échéance | Facultative. Dans le tri par échéance, les tâches sans échéance sont placées après les autres et classées entre elles par priorité. |
 | Catégorie | Une tâche appartient à une seule catégorie au maximum. |
 | Jauge | 0 à 2 règles = faible, 3 = moyen, 4 = fort. Seul un mot de passe « fort » est accepté. |
 | Blocage | 3 échecs → 1 minute de blocage, maintenu même après rechargement de la page. |
-| Mot de passe oublié | Aucune récupération possible (voir Sécurité). |
+| Mot de passe oublié | Aucune récupération possible (voir « Limites connues »). |
 
 ---
 
@@ -166,10 +172,8 @@ L'application ne dispose ni de serveur ni de base de données. Toutes les donné
     "identifiant": "utilisateur_demo",
     "motDePasseHache": "9f86d081884c7d65...",
     "sel": "a1b2c3d4...",
-    "phraseSecoursHachee": "5e884898da280471...",
-    "selPhrase": "e5f6a7b8...",
     "echecsConnexion": 0,
-    "bloque": false
+    "tempsBlocage": null
   }
 }
 ```
@@ -178,8 +182,7 @@ L'application ne dispose ni de serveur ni de base de données. Toutes les donné
  
 ```
 taskflow/
-├── index.html            → page des tâches
-├── login.html            → connexion et création du compte
+├── index.html            → connexion, création du compte et page des tâches
 ├── css/
 │   └── style.css
 ├── js/
@@ -198,9 +201,10 @@ taskflow/
 | `id` | nombre | unique, jamais réutilisé | Identifie la tâche. Les trous (1, 4…) sont normaux après une suppression. |
 | `titre` | texte | non vide | Nom de la tâche |
 | `description` | texte | peut être vide | Détails |
-| `priorite` | texte | `"*"`, `"**"`, `"***"` | Plus il y a d'étoiles, plus la priorité est haute |
+| `priorite` | texte | `"*"`, `"**"`, `"***"` | Niveau 1 (`*`) = secondaire, niveau 2 (`**`) = moyenne, niveau 3 (`***`) = important. Plus il y a d'étoiles, plus la tâche est importante. |
 | `echeance` | texte | date `AAAA-MM-JJ` (ISO 8601) | Norme internationale ; triée comme du texte, elle reste dans l'ordre chronologique |
-| `statut` | texte | `"a_commencer"`, `"en_cours"`, `"termine"`, `"abandonne"` | Choisi dans un menu déroulant ; une tâche `termine` s'affiche barrée |
+| `dateFin` | texte | date `AAAA-MM-JJ`, ou vide | Facultative : proposée quand la tâche passe en « terminée » ou « abandonnée », effacée si le statut change |
+| `statut` | texte | `"a_commencer"`, `"en_cours"`, `"abandonne"`, `"termine"` | Choisi avec les boutons de statut de la tâche ; une tâche `termine` s'affiche barrée |
 | `categorieId` | nombre ou `null` | `id` d'une catégorie existante, ou `null` | Lien vers la catégorie ; `null` = sans catégorie |
 
 ### Catégorie
@@ -220,11 +224,9 @@ L'utilisateur peut créer ses propres catégories. Quand on supprime une catégo
 | `identifiant` | texte | Nom de connexion |
 | `motDePasseHache` | texte | Empreinte du mot de passe. Le mot de passe n'est jamais stocké en clair. |
 | `sel` | texte | Valeur aléatoire ajoutée au mot de passe avant hachage |
-| `phraseSecoursHachee` | texte | Empreinte de la phrase de secours qui débloque le compte |
-| `selPhrase` | texte | Sel propre à la phrase de secours |
 | `echecsConnexion` | nombre | Nombre d'échecs consécutifs |
-| `bloque` | booléen | `true` après 3 échecs ; le déblocage passe par la phrase de secours |
+| `tempsBlocage` | nombre ou `null` | Heure (en millisecondes) de fin du blocage ; `null` = compte non bloqué. Après 3 échecs, elle vaut l'heure actuelle + 1 minute. |
 
 ### Limites connues
 
-Sans serveur, toutes les données restent accessibles depuis les outils de développement du navigateur. Une personne qui a accès à l'ordinateur peut effacer le `localStorage` ou modifier `bloque`. Le hachage empêche de lire le mot de passe et la phrase de secours, mais l'écran de connexion et le blocage servent surtout à dissuader, pas à protéger réellement les données.
+Sans serveur, toutes les données restent accessibles depuis les outils de développement du navigateur. Une personne qui a accès à l'ordinateur peut effacer le `localStorage` ou modifier `tempsBlocage`. Le hachage (avec sel) empêche de lire le mot de passe, mais l'écran de connexion et le blocage servent surtout à dissuader, pas à protéger réellement les données.

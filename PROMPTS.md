@@ -1,12 +1,30 @@
 # PROMPTS.md — Journal de prompts TaskFlow
 
 > Module Outils IA · Bachelor 1 · Ynov Toulouse
+>
 > Binôme : Lisa (Cybersécurité) + Raph (Informatique)
+>
 > Fonctionnalités filière : connexion et robustesse du mot de passe (Lisa) · tri, filtres et catégories (Raph)
 
 ---
 
-## Prompt 1 · User stories (Claude)
+## Sommaire
+
+- **Séance 1 · Cadrage du projet** : prompts 1 à 3 (user stories)
+- **Séance 2 · Développement de TaskFlow**
+  - Sprint 1 · Fonctions de base : prompts 4 et 5
+  - Sprint 2 · Sauvegarde et mise en forme CSS : prompts 6 et 7
+  - Sprint 3 · Fonctionnalités filière : prompts 8 à 11
+  - Transversal · Vérifications et documentation : prompts 12 à 14
+  - Bilan de la séance 2
+
+---
+
+## Séance 1 · Cadrage du projet
+
+*User stories, critères d'acceptation, règles de gestion.*
+
+### Prompt 1 · User stories (Claude)
 
 **Prompt :**
 > Tu es un développeur web qui accompagne des étudiants de 1re année.
@@ -47,7 +65,7 @@
 
 ---
 
-## Prompt 2 · User stories (Claude)
+### Prompt 2 · User stories (Claude)
 
 **Prompt :**
 > Voici nos retours sur ta première liste. Réécris-la entièrement en respectant ces règles. Projet : TaskFlow, application de gestion de tâches, un seul utilisateur par navigateur, sans serveur. Fonctions à couvrir : - Base : créer une tâche (titre vide refusé), afficher, modifier, terminer (la tâche terminée apparaît barrée), supprimer, sauvegarde automatique. - Informatique : priorité de 1 à 3 étoiles, 4 statuts dans un menu déroulant (propose les 4 statuts), filtre par statut, tri par priorité ou par échéance, catégories en couleur, création de catégories. - Cybersécurité : création du compte avec un mot de passe robuste (8 caractères, majuscule, chiffre, caractère spécial) et une jauge faible / moyen / fort, écran de connexion, blocage pendant 1 minute après 3 échecs. Règles : - Entre 5 et 8 stories maximum : une story par grand besoin (par exemple gérer ses tâches, organiser sa liste, classer par catégorie, protéger l'accès, récupérer l'accès), pas une par fonction. - Format « En tant que… je veux… afin de… », le « afin de » est obligatoire. - Les stories décrivent un besoin de l'utilisateur, pas une solution technique : ne mentionne ni localStorage, ni hachage, ni JSON. - Le fait qu'une tâche terminée apparaisse barrée doit être visible dans une story. - Pas de code. Format : 1. Liste numérotée des stories, une par ligne. 2. Un tableau de couverture : chaque fonction listée ci-dessus, et le numéro de la story qui la couvre.
@@ -90,7 +108,7 @@
 
 ---
 
-## Prompt 3 · User stories (Claude)
+### Prompt 3 · User stories (Claude)
 
 **Prompt :**
 > Nous validons tes 8 stories. Ajoute une règle de cohérence : cocher une tâche passe automatiquement son statut à « terminée », et choisir le statut « terminée » coche la case ; décocher la case ou choisir un autre statut fait l'inverse. Tâche : pour chacune des 8 stories, rédige 2 à 4 critères d'acceptation, c'est-à-dire des conditions concrètes et vérifiables qui disent quand la story est terminée. Points obligatoires : - Story 1 : ce qui se passe si le titre est vide. - Stories 3 et 5 : la règle de cohérence entre la case et le statut. - Story 7 : la règle précise de la jauge (combien de critères respectés pour faible, moyen, fort) et si un mot de passe faible est refusé. - Story 8 : ce que voit l'utilisateur pendant le blocage d'une minute. Contraintes : pas de code, pas de termes techniques (localStorage, hachage, JSON). Format : le numéro et le texte de chaque story, puis ses critères en liste à puces. À la fin : liste les hypothèses que tu as faites, puis indique ce qui pourrait être faux ou manquant dans ta réponse.
@@ -164,3 +182,286 @@
 - Sans serveur et sans phrase secrète, permettre une récupération créerait un moyen de contourner le mot de passe. Ne rien prévoir est le choix le plus sûr : personne ne peut accéder aux tâches sans le mot de passe, au prix de leur perte en cas d'oubli.
 - Rendre l'échéance obligatoire serait contraignant pour des tâches sans date précise ; il fallait donc décider où les placer dans le tri.
 - Les points reportés ne sont pas exigés par le cahier des charges et ne tiennent pas dans le temps imparti.
+
+---
+
+---
+
+## Séance 2 · Développement de TaskFlow avec l'IA
+
+> **Outil :** Claude Code (Claude Sonnet 5.5), qui lit et modifie directement les fichiers du dossier TaskFlow. C'est le mode « déléguer » du cours : l'IA est très autonome, donc chaque modification a été relue et testée dans le navigateur.
+>
+> **Prompts :** ils sont copiés tels qu'ils ont été écrits, fautes comprises.
+>
+> **Attention :** les prompts 1 à 3 décrivent l'état de la séance 1. L'application a évolué depuis (« en attente » est devenu « abandonnée », les priorités ont été renommées, etc.). Le README décrit l'état actuel.
+
+---
+
+### Sprint 1 · Fonctions de base
+
+*Créer, afficher, modifier, supprimer, terminer.*
+
+#### Prompt 4 · Date de fin facultative
+
+- **Outil :** Claude Code
+
+**Prompt :**
+> quand on met une tache en terminé il faut proposer a l'utilisateur de mettre une date de fin, il faut ajouter un bouton passer si l'utilisateur ne souhaite pas mettre de date
+
+**Résultat :**
+- Quand une tâche passe en « Terminée », une fenêtre propose une date de fin (aujourd'hui par défaut) avec deux boutons : « Enregistrer » et « Passer ».
+- La date apparaît ensuite sur la tâche (« Terminée le … »). Les tâches ont un nouveau champ `dateFin`.
+- Testé : passer, enregistrer, décocher (la date est effacée), tâche déjà terminée (la fenêtre ne se rouvre pas).
+
+- **Gardé :** la fenêtre, le champ `dateFin` et l'effacement de la date quand le statut change
+- **Modifié :** rien
+- **Rejeté :** rien
+- **Pourquoi :**
+  - Une fenêtre dédiée est plus fiable qu'une saisie de texte libre : le navigateur fournit le sélecteur de date et le format reste `JJ-MM-AAAA`, comme pour l'échéance.
+  - Les anciennes tâches sans `dateFin` continuent de fonctionner.
+
+#### Prompt 5 · Changer le statut en cliquant sur la case
+
+- **Outil :** Claude Code
+- **Touche aussi :** sprint 3 (statuts)
+
+**Prompt :**
+> maintenant je ne veux plus du systeme actuel de changement de status sur chaque taches, je veux maintenant que ce soit sous forme de cliques sur la case, il faut que ça suive la logique une tache commence en A faire, puis un clique sur la case la passe en en cours et un autre la passe en terminé, donc a cote du bouton de suppression mettre un bouton pour passer la tache en abandonnée
+
+**Résultat :**
+- La case de chaque tâche a trois états : vide (À faire), « – » (En cours), cochée en vert (Terminée, titre barré). Chaque clic passe à l'état suivant.
+- Un bouton « Abandonner » est placé à côté de « Supprimer ».
+- La ligne de boutons de statut sous chaque tâche est supprimée. Le statut est écrit en couleur sous le titre.
+
+- **Gardé :** le cycle À faire → En cours → Terminée et le bouton « Abandonner »
+- **Modifié :** rien
+- **Rejeté :** rien
+- **Pourquoi :** deux choix de l'IA qui n'étaient pas dans le prompt, à connaître pour l'oral :
+  - Un clic de plus sur une tâche terminée la remet « À faire » : c'est l'ancien comportement du décochage (story 3).
+  - Le bouton « Abandonner » devient « Reprendre » sur une tâche abandonnée, pour ne pas la bloquer dans cet état en cas d'erreur.
+
+---
+
+### Sprint 2 · Sauvegarde et mise en forme CSS
+
+*Sauvegarde dans le localStorage, style de l'application.*
+
+#### Prompt 6 · Audit du code et restylage
+
+- **Outil :** Claude Code
+
+**Prompt :**
+> regarde tous les fichiers, ne touche pas a structure meme du code, si y'a des critiques a faire dis les moi et restylise le site de manière moderne afin qu'il soit jolie
+
+**Résultat :**
+- Une liste de critiques sur le code existant :
+  - faille XSS (titres et noms de catégorie insérés tels quels avec `innerHTML`) ;
+  - deux fonctions `afficherListeTaches`, dont une jamais utilisée ;
+  - catégorie choisie jamais enregistrée avec la tâche ;
+  - modification d'une tâche non codée ;
+  - blocage de connexion sans compte à rebours ;
+  - bouton d'inscription non désactivé pour un mot de passe faible.
+- Découverte que `css/style.css` s'arrêtait en plein milieu d'un commentaire à la ligne 236 : tout le style des tâches, des accordéons et des filtres n'existait pas. Le fichier a été réécrit en entier, avec les mêmes noms de classes, dans un thème violet.
+
+- **Gardé :** toutes les critiques (elles ont servi de liste de travail au prompt 7) et la réécriture complète du CSS
+- **Modifié :** le thème violet a été remplacé juste après (prompt 7)
+- **Rejeté :** rien
+- **Pourquoi :**
+  - Un CSS tronqué n'est pas une question de goût, c'est un bug : l'application s'affichait sans mise en forme.
+  - La faille XSS est un vrai risque, d'autant plus dans un projet où une moitié du binôme fait de la cybersécurité.
+
+#### Prompt 7 · Corrections du code et style plus naturel
+
+- **Outil :** Claude Code
+- **Touche aussi :** sprint 1 (modifier une tâche) et sprint 3 (sécurité du compte)
+
+**Prompt :**
+> fais tous les changements nécessaire, je te rappel que j'ai un niveau b1 en info a Ynov, de plus je veux que tu changes le style pour qu'il parraisse plus naturel
+
+**Contexte donné à l'IA :** le niveau du binôme (B1), pour que le code reste simple et commenté en français.
+
+**Résultat :**
+- **Sécurité :**
+  - les textes affichés passent par une fonction `echapperHTML` (test : un titre `<img onerror=…>` ne s'exécute plus) ;
+  - le mot de passe est haché avec un sel aléatoire ;
+  - il ne reste qu'un seul afficheur de liste.
+- **Fonctions :**
+  - la catégorie est enregistrée avec la tâche ;
+  - un bouton « Modifier » remplit le formulaire (titre vide refusé aussi à la modification) ;
+  - le tri « Récents » met la dernière tâche d'abord ;
+  - les tâches sans échéance sont classées entre elles par priorité ;
+  - une échéance dépassée s'affiche en rouge « (en retard) ».
+- **Compte :**
+  - l'inscription ne peut plus écraser un compte existant, et la page s'ouvre sur la connexion si un compte existe ;
+  - le bouton d'inscription reste inactif tant que le mot de passe n'est pas « Fort » ;
+  - après 3 échecs, les champs sont désactivés et un compte à rebours s'affiche, même si la page est rechargée ;
+  - on reste connecté après un rechargement dans le même onglet.
+- **Style :** fond crème, accent vert sapin, boutons plats, titres en Georgia, plus d'emojis dans les titres, mode sombre automatique, affichage adapté au téléphone.
+- Le README a été aligné sur le code (statuts, champs de l'utilisateur, arborescence).
+
+- **Gardé :** tout ce qui précède
+- **Modifié :** rien à ce stade
+- **Rejeté (proposé par l'IA, non demandé) :**
+  - priorité en étoiles cliquables comme dans le README (le menu déroulant est plus simple) ;
+  - remplacement des `onclick` par des `addEventListener`.
+
+- **Pourquoi :**
+  - Niveau B1 : on préfère un code qu'on sait expliquer ligne par ligne à un code plus « propre » mais plus abstrait.
+  - Les corrections de sécurité et le blocage avec compte à rebours viennent des critères d'acceptation de la story 8 (prompt 3), que le code de départ ne respectait pas.
+  - Le premier style (violet, dégradés) faisait « généré par une IA » : on voulait quelque chose de plus sobre.
+
+---
+
+### Sprint 3 · Fonctionnalités filière
+
+*Cybersécurité : compte et connexion. Informatique : statuts, filtres, priorités, recherche.*
+
+#### Prompt 8 · Identifiant déjà existant
+
+- **Outil :** Claude Code
+- **Filière :** cybersécurité
+
+**Prompt :**
+> de plus il faut vérifier lors de la connexion ou de la création du compte que l'id n'existe pas deja
+
+**Résultat :**
+- À l'inscription : le message « Cet identifiant existe déjà » s'affiche si c'est le même identifiant (majuscules ignorées). Sinon, un message rappelle la limite d'un seul compte par navigateur.
+- À la connexion : « Cet identifiant n'existe pas » ou « Mot de passe incorrect », chaque essai comptant dans les 3 échecs.
+
+- **Gardé :** les deux vérifications
+- **Modifié :** rien
+- **Rejeté (proposé, non demandé) :** gérer plusieurs comptes sur le même navigateur
+- **Pourquoi :**
+  - Plusieurs comptes obligeraient à changer le modèle de données du README (un seul objet utilisateur aujourd'hui), ce qui dépasse le temps imparti.
+  - **Point ouvert :** dire si l'identifiant existe aide quelqu'un à le deviner. Le binôme peut choisir de revenir à un message unique « Identifiant ou mot de passe incorrect ».
+
+#### Prompt 9 · Statut « abandonnée » et filtre en boutons
+
+- **Outil :** Claude Code
+- **Filière :** informatique
+
+**Prompt :**
+> modifie le statut en attente par le statut abandonné avec la date comme pour le terminé, de plus dans le filtre des status je veux que ce soit comme pour en dessous des taches en forme de ligne avec des clicables
+
+**Résultat :**
+- « En attente » est remplacé par « Abandonnée » partout (code et README), avec la même fenêtre de date facultative que « Terminée » (« Date d'abandon »).
+- Le filtre par statut n'est plus un menu déroulant mais une ligne de boutons cliquables : Tous, À faire, En cours, Abandonnées, Terminées.
+- Les tâches déjà enregistrées avec l'ancien statut « en_attente » repassent automatiquement en « À faire ».
+
+- **Gardé :** tout ce qui précède
+- **Modifié :** rien
+- **Rejeté :** rien
+- **Pourquoi :**
+  - La migration vers « À faire » est un choix de l'IA, pas du cours : c'est le statut le plus neutre, et ces tâches n'avaient pas été abandonnées.
+  - Les prompts 2 et 3 gardent « en attente » parce qu'ils décrivent la séance 1.
+
+#### Prompt 10 · Noms des priorités (une erreur de l'IA)
+
+- **Outil :** Claude Code
+- **Filière :** informatique
+
+**Prompt (première version) :**
+> dans la création d'une tache, pour la priorité au lieu qu'il y ai marqué 1 etoile a cote de l'étoile, qu'il y ai marqué nv.1( une etoile): important , nv.2 (2 étoiles): moyenne, et le troisième secondaire
+
+**Résultat 1 (faux) :** l'IA a lu « nv.1 : important » comme « 1 étoile = le plus prioritaire » et a aussi inversé le tri par priorité pour rester cohérente. Cela contredisait le cahier des charges (« plus il y a d'étoiles, plus la priorité est haute »).
+
+**Prompt de correction :**
+> mais c'est dans lautre sens, plus c'est important, plus il y a d'étoiles
+
+**Résultat 2 :** Nv. 1 (★) : secondaire, Nv. 2 (★★) : moyenne, Nv. 3 (★★★) : important. Le tri par priorité remet les 3 étoiles en premier, le survol des étoiles affiche le nom de la priorité, et le README est corrigé.
+
+- **Gardé :** le résultat 2
+- **Modifié :** les libellés, les valeurs de tri et le README
+- **Rejeté :** le résultat 1 en entier
+- **Pourquoi :** la phrase pouvait se lire dans les deux sens, et l'IA a choisi sans poser de question. L'ordre du menu et le tri ont montré tout de suite le contresens : c'est l'intérêt de tester dans le navigateur.
+
+#### Prompt 11 · Recherche par mot-clé et tâches abandonnées en rouge
+
+- **Outil :** Claude Code
+- **Filière :** informatique (bonus du sujet)
+
+**Prompt :**
+> alors ajoute la recherche par mots clés, de plus quand une tache est abandonné je veux quelle soit en rouge comme le vert pour valider
+
+**Résultat :**
+- Une barre de recherche au-dessus des filtres : elle garde les tâches dont le titre ou la catégorie contient le mot saisi, à chaque lettre tapée, sans tenir compte des majuscules ni des accents (« etude » trouve « Étude »). Elle fonctionne en même temps que le filtre de statut et le tri.
+- Une tâche abandonnée est en rouge, comme une tâche terminée est en vert : case pleine avec ✕, bord gauche, statut, et bouton de filtre « Abandonnées » quand il est actif.
+
+- **Gardé :** tout ce qui précède
+- **Modifié :** le texte de la barre de recherche a été raccourci, car il était coupé sur petit écran
+- **Rejeté :** rien
+- **Pourquoi :** la recherche est un bonus du sujet pour la filière informatique. Chercher aussi dans le nom de la catégorie est un choix de l'IA : c'est pratique avec les catégories colorées, et c'est écrit dans le README.
+
+---
+
+### Transversal · Vérifications et documentation
+
+#### Prompt 12 · Vérifier la conformité avec le cours
+
+- **Outil :** Claude Code, avec le PDF de la séance 1
+
+**Prompt :**
+> est ce que ce site correspond bien a toutes les attentes du profs
+
+**Résultat :** une comparaison point par point avec le sujet.
+- Conforme : cadre technique, fonctions de base, tri, filtre et catégories, connexion, robustesse, jauge, blocage, 8 user stories.
+- À régler : la recherche par mot-clé (bonus) n'existait pas, PROMPTS.md n'était pas à jour, aucun commit n'avait été fait.
+- Le README contenait aussi des règles de gestion qui décrivaient encore l'ancienne case à cocher : elles ont été corrigées.
+
+- **Gardé :** toute la liste
+- **Modifié :** les règles de gestion du README
+- **Rejeté :** rien
+- **Pourquoi :** demander à l'IA de comparer le projet au sujet est utile, mais elle ne voit que les documents qu'on lui donne : elle n'avait pas le PDF de la séance 2 à ce moment-là.
+
+#### Prompt 13 · Rédaction de ce journal
+
+- **Outil :** Claude Code, avec les PDF des séances 1 et 2
+
+**Prompt :**
+> avec les deux fichiers que je t'ai donné, rédige moi le prompt.md qui correspond a la fois a ce que le prof demande et au site que l'on a, en gardant bien les prompts qui sont deja dans le prompt.md qui otn définis les users stories
+
+**Résultat :** ce fichier : les prompts 1 à 3 gardés tels quels, puis les prompts de la séance 2 avec l'outil, le prompt exact, ce qui a été gardé, modifié ou rejeté, et pourquoi.
+
+- **Gardé :** les prompts 1 à 3 sans aucune modification
+- **Modifié :** rien
+- **Rejeté :** rien
+- **Pourquoi :** les user stories ont été décidées en séance 1 et servent de base au README : on garde leur trace d'origine, même si l'application a ensuite évolué.
+
+#### Prompt 14 · Restructuration de ce journal
+
+- **Outil :** Claude Code
+
+**Prompt :**
+> restructure les prompt afin que les sprint de meme niveaux soient tous regroupés et que le md soit propre
+
+**Résultat :** les prompts de la séance 2 sont regroupés par sprint et renumérotés, avec le même format partout et un sommaire. Le texte des prompts 1 à 3 n'a pas changé : seul le niveau de leurs titres a été ajusté.
+
+- **Gardé :** tout le contenu
+- **Modifié :** l'ordre, la numérotation et la mise en forme
+- **Rejeté :** rien
+- **Pourquoi :** le cours demande un journal lisible, qui permette de retrouver ce qui a été fait à chaque sprint.
+
+---
+
+## Bilan de la séance 2
+
+### Récapitulatif par sprint
+
+| Sprint | Contenu | Prompts |
+|---|---|---|
+| 1 · Fonctions de base | Date de fin, statut par clic sur la case, bouton « Abandonner » | 4, 5 |
+| 2 · Sauvegarde et CSS | Audit, corrections du code, deux styles successifs | 6, 7 |
+| 3 · Fonctionnalités filière | Identifiant unique, statut « abandonnée », filtre en boutons, priorités, recherche | 8, 9, 10, 11 |
+| Transversal | Conformité au cours, rédaction du journal | 12, 13, 14 |
+
+### Où l'IA a aidé
+- Repérer des défauts qu'on n'aurait pas vus seuls : CSS tronqué, faille XSS, fonction en double, catégorie jamais enregistrée.
+- Écrire du code répétitif (formulaire de modification, tri, filtres, compte à rebours) et le tester dans le navigateur.
+- Remettre le README en accord avec le code.
+
+### Où elle a fait perdre du temps
+- Le contresens sur les priorités (prompt 10) : elle a pris une décision sans poser de question, ce qui a obligé à corriger le code et le README.
+- Plusieurs allers-retours sur le changement de statut (menu déroulant, puis boutons, puis clic sur la case) : un schéma de l'écran voulu dès le départ aurait évité deux versions.
+
+### Ce qu'on retient
+Une demande précise avec un exemple (prompt 5) donne le bon résultat du premier coup ; une demande ambiguë (prompt 10) demande une vérification.
